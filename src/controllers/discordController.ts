@@ -61,6 +61,7 @@ export const removePoints = async (req: Request, res: Response) => {
 export const linkDiscord = async (req: Request, res: Response) => {
   try {
     const { om, discordId } = req.body;
+
     const apiUrl = "https://auth.pollak.info/user/getUserIdByOm/" + om;
     const apiResponse = await fetch(apiUrl, {
       method: "GET",
@@ -74,13 +75,10 @@ export const linkDiscord = async (req: Request, res: Response) => {
       throw new Error("Nem sikerült lekérni az adatokat az OM rendszerből");
     }
 
-    const { userId } = await apiResponse.json();
+    const { id: userId } = await apiResponse.json();
 
-    const [discordRows] = await db.query<RowDataPacket[]>(
-      "SELECT * FROM users WHERE discordId = ?",
-      [discordId]
-    );
-    //return discordId, userId
+    console.log(userId);
+    console.log(discordId);
 
     res.status(200).json({
       message: {
@@ -88,6 +86,14 @@ export const linkDiscord = async (req: Request, res: Response) => {
         userId: userId,
       },
     });
+    /*
+    const [discordRows] = await db.query<RowDataPacket[]>(
+      "SELECT * FROM users WHERE discordId = ?",
+      [discordId]
+    );
+    */
+    //return discordId, userId
+
     /*
     if (discordRows.length > 0) {
       return res.status(400).json({
