@@ -86,15 +86,14 @@ export const linkDiscord = async (req: Request, res: Response) => {
         userId: userId,
       },
     });
-    /*
-    const [discordRows] = await db.query<RowDataPacket[]>(
+
+    const [discordRows]: [IUser[], any] = await db.query(
       "SELECT * FROM users WHERE discordId = ?",
       [discordId]
     );
-    */
-    //return discordId, userId
 
-    /*
+    console.log(discordRows);
+
     if (discordRows.length > 0) {
       return res.status(400).json({
         message: "Ez a discord fiók már hozzá van kapcsolva egy fiókhoz",
@@ -107,7 +106,6 @@ export const linkDiscord = async (req: Request, res: Response) => {
     ]);
 
     res.status(200).json({ message: "Sikeresen összekapcsolva" });
-    */
   } catch (error) {
     console.error("Hiba történt", error);
     res.status(500).json({ message: "Internal server error" });
