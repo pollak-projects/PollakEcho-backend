@@ -61,19 +61,17 @@ export const removePoints = async (req: Request, res: Response) => {
 export const linkDiscord = async (req: Request, res: Response) => {
   try {
     const { om, discordId } = req.body;
-
-    const apiUrl = "https://gateway.pollak.info/om";
+    const apiUrl = "https://auth.pollak.info/user/getUserIdByOm/" + om;
     const apiResponse = await fetch(apiUrl, {
-      method: "POST",
+      method: "GET",
       headers: {
-        Authorization: `Bearer ${process.env.API_KEY}`,
         "Content-Type": "application/json",
+        "x-api-key": process.env.API_KEY || "",
       },
-      body: JSON.stringify({ om }),
     });
 
     if (!apiResponse.ok) {
-      throw new Error(" Nem sikerült lekérni az adatokat az OM rendszerből");
+      throw new Error("Nem sikerült lekérni az adatokat az OM rendszerből");
     }
 
     const { userId } = await apiResponse.json();
@@ -82,7 +80,15 @@ export const linkDiscord = async (req: Request, res: Response) => {
       "SELECT * FROM users WHERE discordId = ?",
       [discordId]
     );
+    //return discordId, userId
 
+    res.status(200).json({
+      message: {
+        discordId: discordId,
+        userId: userId,
+      },
+    });
+    /*
     if (discordRows.length > 0) {
       return res.status(400).json({
         message: "Ez a discord fiók már hozzá van kapcsolva egy fiókhoz",
@@ -95,6 +101,7 @@ export const linkDiscord = async (req: Request, res: Response) => {
     ]);
 
     res.status(200).json({ message: "Sikeresen összekapcsolva" });
+    */
   } catch (error) {
     console.error("Hiba történt", error);
     res.status(500).json({ message: "Internal server error" });
