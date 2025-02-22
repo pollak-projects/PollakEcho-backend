@@ -80,13 +80,6 @@ export const linkDiscord = async (req: Request, res: Response) => {
     console.log(userId);
     console.log(discordId);
 
-    res.status(200).json({
-      message: {
-        discordId: discordId,
-        userId: userId,
-      },
-    });
-
     const [discordRows]: [IUser[], any] = await db.query(
       "SELECT * FROM users WHERE discordId = ?",
       [discordId]
