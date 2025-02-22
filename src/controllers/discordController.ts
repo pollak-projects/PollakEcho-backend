@@ -133,7 +133,7 @@ export const listTop10Users = async (req: Request, res: Response) => {
           },
         });
 
-        const { data } = await apiResponse.json();
+        const data = await apiResponse.json();
 
         console.log(data);
         return { ...user, ...data };
