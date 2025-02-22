@@ -113,3 +113,33 @@ export const linkDiscord = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const listTop10Users = async (req: Request, res: Response) => {
+  try {
+    const [rows] = await db.query<IUser[]>(
+      "SELECT * FROM users ORDER BY point DESC LIMIT 10"
+    );
+    const topUsers = await Promise.all(
+      rows.map(async (user) => {
+        const apiUrl = "https://auth.pollak.info/user/get/" + user.userId;
+        const apiResponse = await fetch(apiUrl, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": process.env.API_KEY || "",
+          },
+        });
+
+        if (!apiResponse.ok) {
+          throw new Error("Nem sikerült lekérni az adatokat");
+        }
+
+        const { name, om } = await apiResponse.json();
+        return { ...user, name, om };
+      })
+    );
+    res.json(topUsers);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
