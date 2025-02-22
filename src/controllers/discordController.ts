@@ -133,10 +133,6 @@ export const listTop10Users = async (req: Request, res: Response) => {
           },
         });
 
-        if (!apiResponse.ok) {
-          throw new Error("Nem sikerült lekérni az adatokat");
-        }
-
         const { name, om } = await apiResponse.json();
         return { ...user, name, om };
       })
