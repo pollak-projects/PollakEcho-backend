@@ -77,15 +77,10 @@ export const linkDiscord = async (req: Request, res: Response) => {
 
     const { id: userId } = await apiResponse.json();
 
-    console.log(userId);
-    console.log(discordId);
-
     const [discordRows]: [IUser[], any] = await db.query(
       "SELECT * FROM users WHERE discordId = ?",
       [discordId]
     );
-
-    console.log(discordRows);
 
     if (discordRows.length > 0) {
       return res.status(400).json({
@@ -93,10 +88,24 @@ export const linkDiscord = async (req: Request, res: Response) => {
       });
     }
 
-    await db.query("UPDATE users SET discordId = ? WHERE userId = ?", [
-      discordId,
-      userId,
-    ]);
+    const [rows]: [RowDataPacket[], any] = await db.query(
+      "SELECT * FROM users WHERE userId = ?",
+      [userId]
+    );
+
+    if (rows.length === 1) {
+      await db.query("UPDATE users SET discordId = ? WHERE userId = ?", [
+        discordId,
+        userId,
+      ]);
+    } else if (rows.length === 0) {
+      await db.query("INSERT INTO users (userId, discordId) VALUES (?, ?)", [
+        userId,
+        discordId,
+      ]);
+    } else {
+      return res.status(500).json({ message: "Internal server error" });
+    }
 
     res.status(200).json({ message: "Sikeresen összekapcsolva" });
   } catch (error) {
