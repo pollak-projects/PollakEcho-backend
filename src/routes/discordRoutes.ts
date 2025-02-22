@@ -9,6 +9,6 @@ const router = express.Router();
 
 router.post("/add-points", addPoints);
 router.post("/remove-points", removePoints);
-router.post("/link-discord", linkDiscord as any);
+router.post("/om", linkDiscord as any);
 
 export default router;
