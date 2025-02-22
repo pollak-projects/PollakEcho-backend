@@ -118,7 +118,7 @@ export const listTop10Users = async (req: Request, res: Response) => {
   //debug
   try {
     const [rows] = await db.query<IUser[]>(
-      "SELECT * FROM users ORDER BY point DESC LIMIT 10"
+      "SELECT * FROM v_users ORDER BY point DESC LIMIT 10"
     );
     console.log(rows);
 
