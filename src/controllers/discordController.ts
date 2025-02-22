@@ -107,7 +107,7 @@ export const linkDiscord = async (req: Request, res: Response) => {
       return res.status(500).json({ message: "Internal server error" });
     }
 
-    res.status(200).send("Sikeresen összekapcsolva");
+    res.status(200).json({ message: "Sikeresen hozzá lett kapcsolva a fiók" });
   } catch (error) {
     console.error("Hiba történt", error);
     res.status(500).json({ message: "Internal server error" });
