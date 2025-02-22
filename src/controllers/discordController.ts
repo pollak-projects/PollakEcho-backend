@@ -133,10 +133,10 @@ export const listTop10Users = async (req: Request, res: Response) => {
           },
         });
 
-        const { nev } = await apiResponse.json();
+        const { data } = await apiResponse.json();
 
-        console.log(nev);
-        return { ...user, nev };
+        console.log(data);
+        return { ...user, ...data };
       })
     );
     console.log(topUsers);
