@@ -136,7 +136,7 @@ export const listTop10Users = async (req: Request, res: Response) => {
         const data = await apiResponse.json();
 
         console.log(data);
-        return { ...user, ...data };
+        return { ...user, name: data.nev };
       })
     );
     console.log(topUsers);
