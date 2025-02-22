@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import db from "../utils/db";
 import { IUser } from "../models/Student";
+import { RowDataPacket } from "mysql2";
+interface IDiscordRequest {
+  discordId: string;
+  userId: string;
+}
 
 export const addPoints = async (req: Request, res: Response) => {
   try {
@@ -55,28 +60,33 @@ export const removePoints = async (req: Request, res: Response) => {
 
 export const linkDiscord = async (req: Request, res: Response) => {
   try {
-    const { userId, discordId } = req.body;
-    const [rows] = await db.query<IUser[]>(
-      "SELECT * FROM users WHERE userId = ?",
-      [userId]
-    );
-    if (rows.length === 0) {
-      res.status(404).json({ message: "User not found" });
-      return;
+    const { om, discordId } = req.body;
+
+    const apiUrl = "https://gateway.pollak.info/om";
+    const apiResponse = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ om }),
+    });
+
+    if (!apiResponse.ok) {
+      throw new Error(" Nem sikerült lekérni az adatokat az OM rendszerből");
     }
-    if (rows[0].discordId) {
-      res
-        .status(400)
-        .json({ message: "The user already has a discord account linked" });
-      return;
-    }
-    const [rows2] = await db.query<IUser[]>(
+
+    const { userId } = await apiResponse.json();
+
+    const [discordRows] = await db.query<RowDataPacket[]>(
       "SELECT * FROM users WHERE discordId = ?",
       [discordId]
     );
-    if (rows2.length > 0) {
-      res.status(400).json({ message: "Discord account already linked" });
-      return;
+
+    if (discordRows.length > 0) {
+      return res.status(400).json({
+        message: "Ez a discord fiók már hozzá van kapcsolva egy fiókhoz",
+      });
     }
 
     await db.query("UPDATE users SET discordId = ? WHERE userId = ?", [
@@ -84,11 +94,9 @@ export const linkDiscord = async (req: Request, res: Response) => {
       userId,
     ]);
 
-    res.json({
-      message: "Discord account linked successfully",
-      discordId: discordId,
-    });
+    res.status(200).json({ message: "Sikeresen összekapcsolva" });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Hiba történt", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

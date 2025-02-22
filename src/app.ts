@@ -12,9 +12,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/user", userRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/discord", discordRoutes);
-app.use("/api/redeem", redeemRoutes);
+app.use("/user", userRoutes);
+app.use("/admin", adminRoutes);
+app.use("/discord", discordRoutes);
+app.use("/redeem", redeemRoutes);
 
 export default app;

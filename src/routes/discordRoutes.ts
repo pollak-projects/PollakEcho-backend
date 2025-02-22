@@ -1,14 +1,14 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import {
   addPoints,
-  removePoints,
   linkDiscord,
+  removePoints,
 } from "../controllers/discordController";
 
 const router = express.Router();
 
 router.post("/add-points", addPoints);
 router.post("/remove-points", removePoints);
-router.post("/link-discord", linkDiscord);
+router.post("/link-discord", linkDiscord as any);
 
 export default router;
