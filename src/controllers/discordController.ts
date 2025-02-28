@@ -147,3 +147,46 @@ export const listTop10Users = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+/*  getUserMessages,
+  addUserMessages*/
+
+export const getUserMessages = async (req: Request, res: Response) => {
+  try {
+    const { discordId } = req.params;
+    const [rows] = await db.query(
+      "SELECT * FROM messages WHERE discordId = ?",
+      [discordId]
+    );
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const addUserMessages = async (req: Request, res: Response) => {
+  try {
+    const { discordId } = req.params;
+    const { message } = req.body;
+
+    //check if message for discordId exists
+    const [rows] = await db.query(
+      "SELECT * FROM messages WHERE discordId = ?",
+      [discordId]
+    );
+
+    if (rows.length > 0) {
+      return res.status(400).json({ message: "Message already exists" });
+    }
+
+    await db.query("INSERT INTO messages (discordId, message) VALUES (?, ?)", [
+      discordId,
+      message,
+    ]);
+    res.json({ message: "Message added successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
