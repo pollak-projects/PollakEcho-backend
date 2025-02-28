@@ -156,13 +156,19 @@ export const listTop10Users = async (req: Request, res: Response) => {
 export const getUserMessages = async (req: Request, res: Response) => {
   try {
     const { discordId } = req.params;
+    console.log(discordId);
     const [rows] = await db.query(
       "SELECT * FROM messages WHERE discordId = ?",
       [discordId]
     );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "User has no messages" });
+    }
+
     res.json(rows);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error });
   }
 };
 
