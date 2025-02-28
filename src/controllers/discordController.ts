@@ -169,7 +169,7 @@ export const addUserMessages = async (req: Request, res: Response) => {
     const { discordId } = req.params;
     const { message } = req.body;
 
-    const [rows]: [QueryResult] = await db.query(
+    const [rows] = await db.query(
       "SELECT * FROM messages WHERE discordId = ?",
       [discordId]
     );
