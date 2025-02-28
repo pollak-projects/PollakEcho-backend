@@ -4,7 +4,9 @@ import { IUser } from "../models/Student";
 import { RowDataPacket, QueryResult } from "mysql2";
 interface IDiscordRequest {
   discordId: string;
-  userId: string;
+  userId?: string;
+  point?: number;
+  message?: string;
 }
 
 export const addPoints = async (req: Request, res: Response) => {
