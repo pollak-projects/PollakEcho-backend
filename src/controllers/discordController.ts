@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import db from "../utils/db";
 import { IUser } from "../models/Student";
-import { RowDataPacket } from "mysql2";
+import { RowDataPacket, QueryResult } from "mysql2";
 interface IDiscordRequest {
   discordId: string;
   userId: string;
@@ -169,13 +169,12 @@ export const addUserMessages = async (req: Request, res: Response) => {
     const { discordId } = req.params;
     const { message } = req.body;
 
-    //check if message for discordId exists
-    const [rows] = await db.query(
+    const [rows]: [QueryResult] = await db.query(
       "SELECT * FROM messages WHERE discordId = ?",
       [discordId]
     );
 
-    if (rows.length > 0) {
+    if (Array.isArray(rows) && rows.length > 0) {
       return res.status(400).json({ message: "Message already exists" });
     }
 
@@ -188,5 +187,3 @@ export const addUserMessages = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
-
