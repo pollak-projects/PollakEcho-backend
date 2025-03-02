@@ -16,7 +16,7 @@ export const keyMiddleware = async (
     return;
   }
 
-  const response = await fetch("https://auth.pollak.info/verify", {
+  const response = await fetch("https://auth.pollak.info/apiKey/verify", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
