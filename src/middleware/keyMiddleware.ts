@@ -7,11 +7,15 @@ export const keyMiddleware = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  //debug
+  console.log(req.header("x-api-key "));
+  console.log(req.headers);
   const key = req.header("x-api-key");
   if (!key) {
     res.status(401).send("No API key provided");
     return;
   }
+
   const response = await fetch("https://auth.pollak.info/verify", {
     method: "POST",
     headers: {
@@ -19,6 +23,8 @@ export const keyMiddleware = async (
       "x-api-key": key,
     },
   });
+  console.log(response.status);
+
   if (response.status !== 200) {
     res.status(401).send("Invalid API key");
     return;
