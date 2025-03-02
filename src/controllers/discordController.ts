@@ -157,7 +157,7 @@ export const getUserMessages = async (req: Request, res: Response) => {
   try {
     const { discordId } = req.params;
     console.log(discordId);
-    const [rows] = await db.query(
+    const [rows] = await db.query<RowDataPacket[]>(
       "SELECT * FROM messages WHERE discordId = ?",
       [discordId]
     );
