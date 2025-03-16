@@ -1,6 +1,6 @@
-import mysql from "mysql2/promise";
+import pg from "pg";
 
-const db = mysql.createPool({
+const db = new pg.Pool({
   host: process.env.MYSQL_HOST,
   port: parseInt(process.env.MYSQL_PORT || "3306"),
   user: process.env.MYSQL_USER,
