@@ -14,7 +14,7 @@ export const addPoints = async (req: Request, res: Response) => {
   try {
     const { discordId, point } = req.body;
     const [rows] = await db.query<IUser[]>(
-      "SELECT * FROM users WHERE discordId = ?",
+      "SELECT * FROM users WHERE discordId = ?;",
       [discordId]
     );
     if (rows.length === 0) {
@@ -22,7 +22,7 @@ export const addPoints = async (req: Request, res: Response) => {
       return;
     }
 
-    await db.query("UPDATE users SET point = point + ? WHERE discordId = ?", [
+    await db.query("UPDATE users SET point = point + ? WHERE discordId = ?;", [
       point,
       discordId,
     ]);
@@ -47,7 +47,7 @@ export const removePoints = async (req: Request, res: Response) => {
       res.status(404).json({ message: "User not found" });
       return;
     }
-    await db.query("UPDATE users SET point = point - ? WHERE discordId = ?", [
+    await db.query("UPDATE users SET point = point - ? WHERE discordId = ?;", [
       point,
       discordId,
     ]);
@@ -99,7 +99,7 @@ export const linkDiscord = async (req: Request, res: Response) => {
     }
 
     const [rows]: [RowDataPacket[], any] = await db.query(
-      "SELECT * FROM users WHERE userId = ?",
+      "SELECT * FROM users WHERE userId = ?;",
       [userId]
     );
 
@@ -108,13 +108,13 @@ export const linkDiscord = async (req: Request, res: Response) => {
 
     if (rows.length === 1) {
       console.log("A felhasználó már hozzá van kapcsolva egy discord fiókhoz");
-      await db.query("UPDATE users SET discordId = ? WHERE userId = ?", [
+      await db.query("UPDATE users SET discordId = ? WHERE userId = ?;", [
         discordId,
         userId,
       ]);
     } else if (rows.length === 0) {
       console.log("Nincs ilyen felhasználó az adatbázisban");
-      await db.query("INSERT INTO users (userId, discordId) VALUES (?, ?)", [
+      await db.query("INSERT INTO users (userId, discordId) VALUES (?, ?);", [
         userId,
         discordId,
       ]);
@@ -134,7 +134,7 @@ export const listTop10Users = async (req: Request, res: Response) => {
   //debug
   try {
     const [rows] = await db.query<IUser[]>(
-      "SELECT * FROM v_users ORDER BY point DESC LIMIT 10"
+      "SELECT * FROM v_users ORDER BY point DESC LIMIT 10;"
     );
     console.log(rows);
 
@@ -172,7 +172,7 @@ export const getUserMessages = async (req: Request, res: Response) => {
     const { discordId } = req.params;
     console.log(discordId);
     const [rows] = await db.query<RowDataPacket[]>(
-      "SELECT * FROM messages WHERE discordId = ?",
+      "SELECT * FROM messages WHERE discordId = ?;",
       [discordId]
     );
 
@@ -200,7 +200,7 @@ export const addUserMessages = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Message already exists" });
     }
 
-    await db.query("INSERT INTO messages (discordId, message) VALUES (?, ?)", [
+    await db.query("INSERT INTO messages (discordId, message) VALUES (?, ?);", [
       discordId,
       message,
     ]);
