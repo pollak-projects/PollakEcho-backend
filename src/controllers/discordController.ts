@@ -112,10 +112,10 @@ export const linkDiscord = async (req: Request, res: Response) => {
 
     if (rows.length === 1) {
       console.log("A felhasználó már hozzá van kapcsolva egy discord fiókhoz");
-      await db.query("UPDATE users SET \"discordId\" = $1 WHERE \"userId\" = $2", [
-        discordId,
-        userId,
-      ]);
+      return res.status(400).json({
+        message: "A felhasználó már hozzá van kapcsolva egy discord fiókhoz",
+      });
+      
     } else if (rows.length === 0) {
       console.log("Nincs ilyen felhasználó az adatbázisban");
       await db.query("INSERT INTO users (\"userId\", \"discordId\") VALUES ($1, $2)", [
