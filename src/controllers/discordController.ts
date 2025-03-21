@@ -47,7 +47,7 @@ export const removePoints = async (req: Request, res: Response) => {
       res.status(404).json({ message: "User not found" });
       return;
     }
-    await db.query("UPDATE users SET point = point - ? WHERE discordId = ?;", [
+    await db.query("UPDATE users SET point = point - $1 WHERE discordId = $2;", [
       point,
       discordId,
     ]);
@@ -73,7 +73,7 @@ export const linkDiscord = async (req: Request, res: Response) => {
         "x-api-key": process.env.API_KEY || "",
       },
     });
-    console.log("Gettting user id from OM", apiResponse);
+    console.log("Getting user id from OM", apiResponse);
 
     
 
@@ -84,7 +84,7 @@ export const linkDiscord = async (req: Request, res: Response) => {
     const { id: userId } = await apiResponse.json();
 
     const [discordRows]: [IUser[], any] = await db.query(
-      "SELECT * FROM users WHERE discordId = ?",
+      "SELECT * FROM users WHERE discordId = $1",
       [discordId]
     );
 
@@ -99,7 +99,7 @@ export const linkDiscord = async (req: Request, res: Response) => {
     }
 
     const [rows]: [RowDataPacket[], any] = await db.query(
-      "SELECT * FROM users WHERE userId = ?;",
+      "SELECT * FROM users WHERE userId = $1",
       [userId]
     );
 
@@ -108,13 +108,13 @@ export const linkDiscord = async (req: Request, res: Response) => {
 
     if (rows.length === 1) {
       console.log("A felhasználó már hozzá van kapcsolva egy discord fiókhoz");
-      await db.query("UPDATE users SET discordId = ? WHERE userId = ?;", [
+      await db.query("UPDATE users SET discordId = $1 WHERE userId = $2", [
         discordId,
         userId,
       ]);
     } else if (rows.length === 0) {
       console.log("Nincs ilyen felhasználó az adatbázisban");
-      await db.query("INSERT INTO users (userId, discordId) VALUES (?, ?);", [
+      await db.query("INSERT INTO users (userId, discordId) VALUES ($1, $2)", [
         userId,
         discordId,
       ]);
@@ -134,7 +134,7 @@ export const listTop10Users = async (req: Request, res: Response) => {
   //debug
   try {
     const [rows] = await db.query<IUser[]>(
-      "SELECT * FROM v_users ORDER BY point DESC LIMIT 10;"
+      "SELECT * FROM v_users ORDER BY point DESC LIMIT 10"
     );
     console.log(rows);
 
