@@ -73,6 +73,9 @@ export const linkDiscord = async (req: Request, res: Response) => {
         "x-api-key": process.env.API_KEY || "",
       },
     });
+    console.log("Gettting user id from OM", apiResponse);
+
+    
 
     if (!apiResponse.ok) {
       throw new Error("Nem sikerült lekérni az adatokat az OM rendszerből");
@@ -85,10 +88,14 @@ export const linkDiscord = async (req: Request, res: Response) => {
       [discordId]
     );
 
+    console.log(discordRows);
+
     if (discordRows.length > 0) {
+      console.log("Ez a discord fiók már hozzá van kapcsolva egy fiókhoz");
       return res.status(400).json({
         message: "Ez a discord fiók már hozzá van kapcsolva egy fiókhoz",
       });
+
     }
 
     const [rows]: [RowDataPacket[], any] = await db.query(
@@ -96,17 +103,23 @@ export const linkDiscord = async (req: Request, res: Response) => {
       [userId]
     );
 
+    console.log(rows);
+
+
     if (rows.length === 1) {
+      console.log("A felhasználó már hozzá van kapcsolva egy discord fiókhoz");
       await db.query("UPDATE users SET discordId = ? WHERE userId = ?", [
         discordId,
         userId,
       ]);
     } else if (rows.length === 0) {
+      console.log("Nincs ilyen felhasználó az adatbázisban");
       await db.query("INSERT INTO users (userId, discordId) VALUES (?, ?)", [
         userId,
         discordId,
       ]);
     } else {
+      console.log("Több mint egy felhasználó van az adatbázisban");
       return res.status(500).json({ message: "Internal server error" });
     }
 
