@@ -1,6 +1,7 @@
 import pg from "pg";
+const { Pool } = pg
 
-const db = new pg.Pool({
+const db = new Pool({
   host: process.env.MYSQL_HOST,
   port: parseInt(process.env.MYSQL_PORT || "3306"),
   user: process.env.MYSQL_USER,

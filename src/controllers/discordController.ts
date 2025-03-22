@@ -2,7 +2,9 @@
 import { Request, Response } from "express";
 import db from "../utils/db";
 import { IUser } from "../models/Student";
-import { RowDataPacket, QueryResult } from "mysql2";
+// Update imports for PostgreSQL
+import { QueryResult } from "pg";
+
 interface IDiscordRequest {
   discordId: string;
   userId?: string;
@@ -13,16 +15,18 @@ interface IDiscordRequest {
 export const addPoints = async (req: Request, res: Response) => {
   try {
     const { discordId, point } = req.body;
-    const [rows] = await db.query<IUser[]>(
-      "SELECT * FROM users WHERE discordId = ?",
+    const result = await db.query<IUser>(
+      "SELECT * FROM users WHERE \"discordId\" = $1;",
       [discordId]
     );
+    const rows = result.rows;
+    
     if (rows.length === 0) {
       res.status(404).json({ message: "User not found" });
       return;
     }
 
-    await db.query("UPDATE users SET point = point + ? WHERE discordId = ?", [
+    await db.query("UPDATE users SET point = point + $1 WHERE \"discordId\" = $2;", [
       point,
       discordId,
     ]);
@@ -39,15 +43,17 @@ export const addPoints = async (req: Request, res: Response) => {
 export const removePoints = async (req: Request, res: Response) => {
   try {
     const { discordId, point } = req.body;
-    const [rows] = await db.query<IUser[]>(
-      "SELECT * FROM users WHERE discordId = ?",
+    const result = await db.query<IUser>(
+      "SELECT * FROM users WHERE \"discordId\" = $1",
       [discordId]
     );
+    const rows = result.rows;
+    
     if (rows.length === 0) {
       res.status(404).json({ message: "User not found" });
       return;
     }
-    await db.query("UPDATE users SET point = point - ? WHERE discordId = ?", [
+    await db.query("UPDATE users SET point = point - $1 WHERE \"discordId\" = $2;", [
       point,
       discordId,
     ]);
@@ -73,6 +79,7 @@ export const linkDiscord = async (req: Request, res: Response) => {
         "x-api-key": process.env.API_KEY || "",
       },
     });
+    console.log("Getting user id from OM", apiResponse);
 
     if (!apiResponse.ok) {
       throw new Error("Nem sikerült lekérni az adatokat az OM rendszerből");
@@ -80,29 +87,38 @@ export const linkDiscord = async (req: Request, res: Response) => {
 
     const { id: userId } = await apiResponse.json();
 
-    const [discordRows]: [IUser[], any] = await db.query(
-      "SELECT * FROM users WHERE discordId = ?",
+    const discordResult = await db.query(
+      "SELECT * FROM users WHERE \"discordId\" = $1",
       [discordId]
     );
+    const discordRows = discordResult.rows;
+
+    console.log(discordRows);
 
     if (discordRows.length > 0) {
+      console.log("Ez a discord fiók már hozzá van kapcsolva egy fiókhoz");
       return res.status(400).json({
         message: "Ez a discord fiók már hozzá van kapcsolva egy fiókhoz",
       });
     }
 
-    const [rows]: [RowDataPacket[], any] = await db.query(
-      "SELECT * FROM users WHERE userId = ?",
+    const userResult = await db.query(
+      "SELECT * FROM users WHERE \"userId\" = $1",
       [userId]
     );
+    const rows = userResult.rows;
+
+    console.log(rows);
 
     if (rows.length === 1) {
-      await db.query("UPDATE users SET discordId = ? WHERE userId = ?", [
-        discordId,
-        userId,
-      ]);
+      console.log("A felhasználó már hozzá van kapcsolva egy discord fiókhoz");
+      return res.status(400).json({
+        message: "A felhasználó már hozzá van kapcsolva egy discord fiókhoz",
+      });
+      
     } else if (rows.length === 0) {
-      await db.query("INSERT INTO users (userId, discordId) VALUES (?, ?)", [
+      console.log("Nincs ilyen felhasználó az adatbázisban");
+      await db.query("INSERT INTO users (\"userId\", \"discordId\") VALUES ($1, $2)", [
         userId,
         discordId,
       ]);
@@ -116,6 +132,7 @@ export const linkDiscord = async (req: Request, res: Response) => {
         },
       });
     } else {
+      console.log("Több mint egy felhasználó van az adatbázisban");
       return res.status(500).json({ message: "Internal server error" });
     }
 
@@ -132,11 +149,11 @@ export const linkDiscord = async (req: Request, res: Response) => {
 };
 
 export const listTop10Users = async (req: Request, res: Response) => {
-  //debug
   try {
-    const [rows] = await db.query<IUser[]>(
+    const result = await db.query(
       "SELECT * FROM v_users ORDER BY point DESC LIMIT 10"
     );
+    const rows = result.rows;
     console.log(rows);
 
     const topUsers = await Promise.all(
@@ -165,17 +182,15 @@ export const listTop10Users = async (req: Request, res: Response) => {
   }
 };
 
-/*  getUserMessages,
-  addUserMessages*/
-
 export const getUserMessages = async (req: Request, res: Response) => {
   try {
     const { discordId } = req.params;
     console.log(discordId);
-    const [rows] = await db.query<RowDataPacket[]>(
-      "SELECT * FROM messages WHERE discordId = ?",
+    const result = await db.query(
+      "SELECT * FROM messages WHERE \"discordId\" = $1;",
       [discordId]
     );
+    const rows = result.rows;
 
     if (rows.length === 0) {
       return res.status(404).json({ message: "User has no messages" });
@@ -192,16 +207,17 @@ export const addUserMessages = async (req: Request, res: Response) => {
     const { discordId } = req.params;
     const { message } = req.body;
 
-    const [rows] = await db.query(
-      "SELECT * FROM messages WHERE discordId = ?",
+    const result = await db.query(
+      "SELECT * FROM messages WHERE \"discordId\" = $1",
       [discordId]
     );
+    const rows = result.rows;
 
     if (Array.isArray(rows) && rows.length > 0) {
       return res.status(400).json({ message: "Message already exists" });
     }
 
-    await db.query("INSERT INTO messages (discordId, message) VALUES (?, ?)", [
+    await db.query("INSERT INTO messages (\"discordId\", message) VALUES ($1, $2);", [
       discordId,
       message,
     ]);
