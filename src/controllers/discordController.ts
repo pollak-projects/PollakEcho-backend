@@ -88,7 +88,7 @@ export const linkDiscord = async (
 
     const userExists = await checkUserExists(userId);
     if (userExists) {
-      return res.status(400).json({
+      return res.status(409).json({
         message: "A felhasználó már hozzá van kapcsolva egy discord fiókhoz",
       });
     }
