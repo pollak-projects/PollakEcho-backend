@@ -106,11 +106,25 @@ export const linkDiscord = async (req: Request, res: Response) => {
         userId,
         discordId,
       ]);
+
+      const apiUrl2 = "https://auth.pollak.info/user/get/" + userId;
+      const apiResponse2 = await fetch(apiUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": process.env.API_KEY || "",
+        },
+      });
     } else {
       return res.status(500).json({ message: "Internal server error" });
     }
 
-    res.status(200).json({ message: "Sikeresen hozzá lett kapcsolva a fiók" });
+    res
+      .status(200)
+      .json({
+        message: "Sikeresen hozzá lett kapcsolva a fiók",
+        content: apiResponse2.json(),
+      });
   } catch (error) {
     console.error("Hiba történt", error);
     res.status(500).json({ message: "Internal server error" });
