@@ -24,11 +24,13 @@ export class TokenCache {
   }
 
   static getToken(clientId: string): string | undefined {
+    console.log("Getting token from cache", clientId);
     const cachedToken = this.cache.get(clientId);
     if (!cachedToken) return undefined;
 
     // Check if token is still valid (with 30-second buffer)
     if (Date.now() < cachedToken.expiryTime - 600000) {
+      console.log("Token is still valid", cachedToken.token);
       return cachedToken.token;
     }
 
