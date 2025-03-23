@@ -95,9 +95,9 @@ export const linkDiscord = async (
       });
     }
 
-    await createUserDiscordLink(userId, discordId);
     const userData = await getUserData(userId);
 
+    await createUserDiscordLink(userId, discordId);
     console.log(userData);
 
     return res.status(200).json({
@@ -106,7 +106,7 @@ export const linkDiscord = async (
     });
   } catch (error) {
     console.error("Hiba történt:", error);
-    return res.status(500).json({ message: "Belülési hiba történt" });
+    return res.status(500).json({ message: "Szerver hiba" });
   }
 };
 
@@ -165,6 +165,9 @@ const getUserData = async (userId: string): Promise<object> => {
       Authorization: `${TokenCache.getToken(process.env.CLIENT_ID!)}`,
     },
   });
+
+  console.log(response.data);
+  console.log(response.json());
 
   return await response.json();
 };
