@@ -120,9 +120,7 @@ const getUserIdFromOM = async (om: string): Promise<string> => {
       Authorization: `${TokenCache.getToken(process.env.CLIENT_ID!)}`,
     },
   });
-  console.log("Backend response");
-  console.log(response);
-  console.log("------------------");
+
   if (!response.ok) {
     throw new Error("Nem sikerült lekérni az adatokat az OM rendszerből");
   }
@@ -164,7 +162,7 @@ const getUserData = async (userId: string): Promise<object> => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "x-api-key": process.env.API_KEY || "",
+      Authorization: `${TokenCache.getToken(process.env.CLIENT_ID!)}`,
     },
   });
 
@@ -181,12 +179,12 @@ export const listTop10Users = async (req: Request, res: Response) => {
 
     const topUsers = await Promise.all(
       rows.map(async (user) => {
-        const apiUrl = "https://auth.pollak.info/user/get/" + user.userId;
+        const apiUrl = `${process.env.BACKEND_URL}/api/v1/users-data/${user.userId}`;
         const apiResponse = await fetch(apiUrl, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "x-api-key": process.env.API_KEY || "",
+            Authorization: `${TokenCache.getToken(process.env.CLIENT_ID!)}`,
           },
         });
 

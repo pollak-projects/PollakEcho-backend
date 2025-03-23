@@ -20,7 +20,6 @@ export const keyMiddleware = async (
       "x-api-key": key,
     },
   });
-  console.log(response.status);
 
   if (response.status !== 200) {
     res.status(401).send("Invalid API key");

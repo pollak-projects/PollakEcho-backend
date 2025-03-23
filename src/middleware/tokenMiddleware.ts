@@ -83,7 +83,6 @@ export class KeycloakMiddleware {
       const cachedToken = TokenCache.getToken(process.env.CLIENT_ID!);
 
       if (!cachedToken) {
-        console.log("Token not found in cache, obtaining new token");
         await KeycloakMiddleware.obtainAccessToken();
       }
 
