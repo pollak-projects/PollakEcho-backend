@@ -7,9 +7,6 @@ export const keyMiddleware = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  console.log(req.header("x-api-key"));
-  console.log(req.headers);
-
   const key = req.header("x-api-key");
   if (!key) {
     res.status(401).send("No API key provided");

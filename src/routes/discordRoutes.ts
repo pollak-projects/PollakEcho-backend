@@ -5,15 +5,16 @@ import {
   listTop10Users,
   removePoints,
   getUserMessages,
-  addUserMessages
+  addUserMessages,
 } from "../controllers/discordController";
+import { KeycloakMiddleware } from "../middleware/tokenMiddleware";
 
 const router = express.Router();
 
 router.post("/add-points", addPoints);
 router.post("/remove-points", removePoints);
-router.post("/om", linkDiscord as any);
+router.post("/om", KeycloakMiddleware.authMiddleware, linkDiscord as any);
 router.get("/top", listTop10Users);
-router.get("/msg/:discordId", getUserMessages as any );
-router.post("/msg/:discordId", addUserMessages as any );
+router.get("/msg/:discordId", getUserMessages as any);
+router.post("/msg/:discordId", addUserMessages as any);
 export default router;

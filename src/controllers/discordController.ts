@@ -4,6 +4,7 @@ import db from "../utils/db";
 import { IUser } from "../models/Student";
 // Update imports for PostgreSQL
 import { QueryResult } from "pg";
+import { TokenCache } from "../middleware/tokenMiddleware";
 
 interface IDiscordRequest {
   discordId: string;
@@ -107,16 +108,18 @@ export const linkDiscord = async (
 };
 
 const getUserIdFromOM = async (om: string): Promise<string> => {
-  const apiUrl = `https://auth.pollak.info/user/getUserIdByOm/${om}`;
+  const apiUrl = `${process.env.BACKEND_URL}/api/v1/users-data/om/${om}`;
 
   const response = await fetch(apiUrl, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "x-api-key": process.env.API_KEY || "",
+      Authorization: `Bearer ${TokenCache.getToken(process.env.CLIENT_ID!)}`,
     },
   });
-
+  console.log("Backend response");
+  console.log(response);
+  console.log("------------------");
   if (!response.ok) {
     throw new Error("Nem sikerült lekérni az adatokat az OM rendszerből");
   }
