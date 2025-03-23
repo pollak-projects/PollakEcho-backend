@@ -127,7 +127,7 @@ const getUserIdFromOM = async (om: string): Promise<string> => {
     throw new Error("Nem sikerült lekérni az adatokat az OM rendszerből");
   }
 
-  return await response.data;
+  return await response.text();
 };
 
 const checkExistingDiscordLink = async (
