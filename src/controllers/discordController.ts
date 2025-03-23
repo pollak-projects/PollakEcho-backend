@@ -97,6 +97,8 @@ export const linkDiscord = async (
     await createUserDiscordLink(userId, discordId);
     const userData = await getUserData(userId);
 
+    console.log(userData);
+
     return res.status(200).json({
       message: "Sikeresen hozzá lett kapcsolva a fiók",
       content: userData,
@@ -127,8 +129,7 @@ const getUserIdFromOM = async (om: string): Promise<string> => {
     throw new Error("Nem sikerült lekérni az adatokat az OM rendszerből");
   }
 
-  const data = await response.json();
-  return data.id;
+  return await response.json();
 };
 
 const checkExistingDiscordLink = async (
@@ -158,7 +159,8 @@ const createUserDiscordLink = async (
 };
 
 const getUserData = async (userId: string): Promise<object> => {
-  const apiUrl = `https://auth.pollak.info/user/get/${userId}`;
+  const apiUrl = `${process.env.BACKEND_URL}/api/v1/users-data/${userId}`;
+  //https://auth-v2.pollak.info/api/v1/users-data/415bcb4c-000d-427e-a482-225de7f279cb
 
   const response = await fetch(apiUrl, {
     method: "GET",
