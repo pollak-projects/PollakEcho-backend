@@ -80,6 +80,7 @@ export const linkDiscord = async (
     }
 
     const userId = await getUserIdFromOM(om);
+    console.log("User ID from OM:", userId);
     const existingDiscordLink = await checkExistingDiscordLink(discordId);
     if (existingDiscordLink) {
       return res.status(409).json({
