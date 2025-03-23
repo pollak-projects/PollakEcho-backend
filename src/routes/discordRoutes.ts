@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.post("/add-points", addPoints);
 router.post("/remove-points", removePoints);
-router.post("/om", KeycloakMiddleware.authMiddleware, linkDiscord as any);
+router.post("/om", linkDiscord as any);
 router.get("/top", listTop10Users);
 router.get("/msg/:discordId", getUserMessages as any);
 router.post("/msg/:discordId", addUserMessages as any);

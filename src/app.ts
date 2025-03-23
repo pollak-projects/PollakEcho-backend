@@ -6,6 +6,7 @@ import discordRoutes from "./routes/discordRoutes";
 import redeemRoutes from "./routes/redeemRoutes";
 import userRoutes from "./routes/userRoutes";
 import { keyMiddleware } from "./middleware/keyMiddleware";
+import { KeycloakMiddleware } from "./middleware/tokenMiddleware";
 
 dotenv.config();
 
@@ -16,7 +17,12 @@ app.use(express.json());
 
 app.use("/user", keyMiddleware, userRoutes);
 app.use("/admin", keyMiddleware, adminRoutes);
-app.use("/discord", keyMiddleware, discordRoutes);
+app.use(
+  "/discord",
+  KeycloakMiddleware.authMiddleware,
+  keyMiddleware,
+  discordRoutes
+);
 app.use("/redeem", keyMiddleware, redeemRoutes);
 
 export default app;
