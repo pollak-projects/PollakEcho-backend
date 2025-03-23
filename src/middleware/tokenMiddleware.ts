@@ -40,7 +40,7 @@ export class TokenCache {
 
 export class KeycloakMiddleware {
   private static readonly KEYCLOAK_TOKEN_ENDPOINT =
-    "https://keycloak-deploy-headless.default.svc.cluster.local:8080/realms/master/protocol/openid-connect/token";
+    "http://keycloak-deploy-headless.default.svc.cluster.local:8080/realms/master/protocol/openid-connect/token";
   private static readonly TOKEN_TYPE = "Bearer";
 
   private static async obtainAccessToken(): Promise<string> {
