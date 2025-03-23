@@ -156,20 +156,42 @@ const createUserDiscordLink = async (
 
 const getUserData = async (userId: string): Promise<object> => {
   const apiUrl = `${process.env.BACKEND_URL}/api/v1/users-data/${userId}`;
-  //https://auth-v2.pollak.info/api/v1/users-data/415bcb4c-000d-427e-a482-225de7f279cb
 
-  const response = await fetch(apiUrl, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `${TokenCache.getToken(process.env.CLIENT_ID!)}`,
-    },
-  });
+  try {
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${TokenCache.getToken(process.env.CLIENT_ID!)}`,
+      },
+    });
 
-  const data = await response.json();
+    if (!response.ok) {
+      throw new Error(
+        `API returned error status: ${response.status} ${response.statusText}`
+      );
+    }
 
-  console.log(data);
-  return data;
+    // Check if there's content
+    const text = await response.text();
+    if (!text) {
+      console.log("Empty response received from API");
+      return {};
+    }
+
+    // Try to parse the text as JSON
+    try {
+      const data = JSON.parse(text);
+      console.log("User data retrieved:", data);
+      return data;
+    } catch (parseError) {
+      console.error("Failed to parse JSON response:", text);
+      throw new Error(`Invalid JSON response: ${parseError.message}`);
+    }
+  } catch (error) {
+    console.error(`Error fetching user data for userId=${userId}:`, error);
+    throw error;
+  }
 };
 
 export const listTop10Users = async (req: Request, res: Response) => {
