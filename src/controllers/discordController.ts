@@ -166,10 +166,10 @@ const getUserData = async (userId: string): Promise<object> => {
     },
   });
 
-  console.log(response.data);
-  console.log(response.json());
+  const data = await response.json();
 
-  return await response.json();
+  console.log(data);
+  return data;
 };
 
 export const listTop10Users = async (req: Request, res: Response) => {
