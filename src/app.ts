@@ -17,12 +17,7 @@ app.use(express.json());
 
 app.use("/user", keyMiddleware, userRoutes);
 app.use("/admin", keyMiddleware, adminRoutes);
-app.use(
-  "/discord",
-  KeycloakMiddleware.authMiddleware,
-  keyMiddleware,
-  discordRoutes
-);
+app.use("/discord", KeycloakMiddleware.authMiddleware, discordRoutes);
 app.use("/redeem", keyMiddleware, redeemRoutes);
 
 export default app;

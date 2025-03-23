@@ -44,6 +44,7 @@ export class KeycloakMiddleware {
   private static readonly TOKEN_TYPE = "Bearer";
 
   private static async obtainAccessToken(): Promise<string> {
+    console.log("Obtaining new Keycloak access token");
     try {
       const response = await axios.post<KeycloakTokenResponse>(
         KeycloakMiddleware.KEYCLOAK_TOKEN_ENDPOINT,
@@ -59,6 +60,8 @@ export class KeycloakMiddleware {
         }
       );
 
+      console.log("Obtained new access token", response.data);
+
       TokenCache.storeToken(
         process.env.CLIENT_ID!,
         `${response.data.token_type} ${response.data.access_token}`,
@@ -67,6 +70,7 @@ export class KeycloakMiddleware {
 
       return TokenCache.getToken(process.env.CLIENT_ID!)!;
     } catch (error) {
+      console.log("Error obtaining token", error);
       throw new Error(
         `Failed to obtain Keycloak access token: ${
           (error as AxiosError)?.response?.data ?? error
@@ -83,7 +87,10 @@ export class KeycloakMiddleware {
     try {
       const cachedToken = TokenCache.getToken(process.env.CLIENT_ID!);
 
+      console.log("Cached token", cachedToken);
+
       if (!cachedToken) {
+        console.log("Token not found in cache, obtaining new token");
         await KeycloakMiddleware.obtainAccessToken();
       }
 
