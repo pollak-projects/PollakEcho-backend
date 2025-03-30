@@ -113,6 +113,7 @@ export const linkDiscord = async (
 const getUserIdFromOM = async (om: string): Promise<string> => {
   const apiUrl = `${process.env.BACKEND_URL}/api/v1/users-data/om/${om}`;
 
+  console.log("OM:", om);
   const response = await fetch(apiUrl, {
     method: "GET",
     headers: {
@@ -120,6 +121,10 @@ const getUserIdFromOM = async (om: string): Promise<string> => {
       Authorization: `${TokenCache.getToken(process.env.CLIENT_ID!)}`,
     },
   });
+
+  //debug
+  console.log("API response:", response);
+  console.log("API URL:", apiUrl);
 
   if (!response.ok) {
     throw new Error("Nem sikerült lekérni az adatokat az OM rendszerből");
