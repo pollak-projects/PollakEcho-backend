@@ -17,7 +17,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /devices:
+ * /smart/devices:
  *   get:
  *     summary: Retrieve a list of devices
  *     responses:
@@ -28,7 +28,7 @@ router.get("/devices", getDevices);
 
 /**
  * @swagger
- * /devices/{deviceId}:
+ * /smart/devices/{deviceId}:
  *   get:
  *     summary: Retrieve a device by ID
  *     parameters:
@@ -46,7 +46,7 @@ router.get("/devices/:deviceId", getDeviceById);
 
 /**
  * @swagger
- * /devices:
+ * /smart/devices:
  *   post:
  *     summary: Add a new device
  *     responses:
@@ -57,7 +57,7 @@ router.post("/devices", addDevice);
 
 /**
  * @swagger
- * /devices/{deviceId}:
+ * /smart/devices/{deviceId}:
  *   put:
  *     summary: Update a device by ID
  *     parameters:
@@ -75,7 +75,7 @@ router.put("/devices/:deviceId", updateDevice);
 
 /**
  * @swagger
- * /devices/{deviceId}:
+ * /smart/devices/{deviceId}:
  *   delete:
  *     summary: Delete a device by ID
  *     parameters:
@@ -93,7 +93,7 @@ router.delete("/devices/:deviceId", deleteDevice);
 
 /**
  * @swagger
- * /devices/{deviceId}/status:
+ * /smart/devices/{deviceId}/status:
  *   get:
  *     summary: Get the status of a device
  *     parameters:
@@ -111,7 +111,7 @@ router.get("/devices/:deviceId/status", getDeviceStatus);
 
 /**
  * @swagger
- * /devices/{deviceId}/type:
+ * /smart/devices/{deviceId}/type:
  *   get:
  *     summary: Get the type of a device
  *     parameters:
@@ -129,7 +129,7 @@ router.get("/devices/:deviceId/type", getDeviceType);
 
 /**
  * @swagger
- * /devices/{deviceId}/settings:
+ * /smart/devices/{deviceId}/settings:
  *   put:
  *     summary: Update the settings of a device
  *     parameters:
@@ -147,7 +147,7 @@ router.put("/devices/:deviceId/settings", updateDeviceSettings);
 
 /**
  * @swagger
- * /devices/{deviceId}/settings:
+ * /smart/devices/{deviceId}/settings:
  *   get:
  *     summary: Get the settings of a device
  *     parameters:
@@ -165,7 +165,7 @@ router.get("/devices/:deviceId/settings", getDeviceSettings);
 
 /**
  * @swagger
- * /devices/{deviceId}/toggle:
+ * /smart/devices/{deviceId}/toggle:
  *   post:
  *     summary: Toggle the state of a device
  *     parameters:
