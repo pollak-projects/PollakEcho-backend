@@ -373,3 +373,61 @@ export const getDeviceLocation = (req: Request, res: Response) => {
     res.status(500).json({ message: "Server error", error });
   }
 };
+
+
+//Solar panels that has Sun coverage, Energy production, Energy efficiency
+const solarPanels = [
+{
+  id: 1,
+  sunCoverage: Math.floor(Math.random() * 100),
+  energyProduction: Math.floor(Math.random() * 1000),
+  energyEfficiency: Math.floor(Math.random() * 100),
+},
+{
+  id: 2,
+  sunCoverage: Math.floor(Math.random() * 100),
+  energyProduction: Math.floor(Math.random() * 1000),
+  energyEfficiency: Math.floor(Math.random() * 100),
+}
+];
+
+const generateRandomEnergyData = () => {
+  return {
+    sunCoverage: Math.floor(Math.random() * 100),
+    energyProduction: Math.floor(Math.random() * 1000),
+    energyEfficiency: Math.floor(Math.random() * 100),
+  };
+}
+
+
+
+
+//at every get endpoint for solar panels, generate random data for the solar panels energy data
+export const getSolarPanels = (req: Request, res: Response) => {
+  try {
+    const panels = solarPanels.map(panel => ({
+      ...panel,
+      ...generateRandomEnergyData()
+    }));
+    res.json(panels);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+export const getSolarPanelById = (req: Request, res: Response) => {
+  try {
+    const panelId = parseInt(req.params.id);
+    const panel = solarPanels.find(panel => panel.id === panelId);
+    if (!panel) {
+      res.status(404).json({ message: "Panel not found" });
+      return;
+    }
+    res.json({
+      ...panel,
+      ...generateRandomEnergyData()
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};

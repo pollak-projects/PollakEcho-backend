@@ -12,6 +12,8 @@ import {
   toggleDevice,
   updateDevice,
   updateDeviceSettings,
+  getSolarPanelById,
+  getSolarPanels,
 } from "../controllers/smartHome";
 const router = express.Router();
 
@@ -183,5 +185,37 @@ router.post("/devices/:deviceId/toggle", toggleDevice);
 
 router.get("/devices/:deviceId/history", getDeviceHistory);
 router.get("/devices/:deviceId/location", getDeviceLocation);
+
+
+/**
+ * @swagger
+ * /smart/solar-panels:
+ *   get:
+ *     summary: Retrieve a list of solar panels
+ *     responses:
+ *       200:
+ *         description: A list of solar panels
+ */
+router.get("/solar-panels", getSolarPanels);
+
+/**
+ * @swagger
+ * /smart/solar-panels/{panelId}:
+ *   get:
+ *     summary: Retrieve a solar panel by ID
+ *     parameters:
+ *       - in: path
+ *         name: panelId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the solar panel
+ *     responses:
+ *       200:
+ *         description: A single solar panel
+ */
+router.get("/solar-panels/:panelId", getSolarPanelById);
+
+
 
 export default router;
