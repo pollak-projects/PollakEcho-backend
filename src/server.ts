@@ -15,9 +15,13 @@ const options = {
     },
     servers: [
       {
-        url: "https://api-echo.pollak.info",
+        url: "https://api-echo.pollak.info/smart",
         description: "Production server"
       },
+      {
+        url: "http://localhost:5000",
+        description: "Development server"
+      }
     ],
   },
   apis: [
