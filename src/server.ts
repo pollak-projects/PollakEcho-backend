@@ -4,7 +4,7 @@ import swaggerJsdoc from "swagger-jsdoc";
 
 const options = {
   definition: {
-    openapi: "3.1.0",
+    openapi: "3.0.0", // Use 3.0.0 for better compatibility
     info: {
       title: "Smart Home API",
       version: "1.0.0",
@@ -13,11 +13,13 @@ const options = {
     servers: [
       {
         url: "https://api-echo.pollak.info",
+        description: "Production server"
       },
     ],
   },
-  apis: ["./src/routes/*.ts"], // Updated path to include the correct relative path and file extension
+  apis: [path.resolve(__dirname, "./routes/*.ts"), path.resolve(__dirname, "./routes/*.js")], // Include both TS and JS files
 };
+
 
 const specs = swaggerJsdoc(options);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
